@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdf-vanguard"
+version = "0.1.0"
+description = "Red team / blue team toolkit for PDF prompt injection testing and detection"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [{name = "diffe"}]
+keywords = ["pdf", "prompt-injection", "security", "red-team", "blue-team", "llm"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+dependencies = [
+    "pikepdf",
+    "pypdf",
+    "pdfplumber",
+]
+
+[project.scripts]
+pdf-inject = "pdf_vanguard.cli.inject_cmd:main"
+pdf-scan = "pdf_vanguard.cli.scan_cmd:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
