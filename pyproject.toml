@@ -19,9 +19,15 @@ classifiers = [
     "Topic :: Security",
 ]
 dependencies = [
-    "pikepdf",
-    "pypdf",
-    "pdfplumber",
+    "pikepdf>=8,<12",
+    "pypdf>=4,<7",
+    "pdfplumber>=0.10,<0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "ruff>=0.4",
 ]
 
 [project.scripts]
@@ -30,3 +36,21 @@ pdf-scan = "pdf_vanguard.cli.scan_cmd:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+# PLE2515/RUF001: this project deliberately handles invisible/zero-width
+# characters in source (encoder, decoder, tests), so flag them off here.
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"pdf_vanguard/detector/zwc_decoder.py" = ["RUF001"]
+"pdf_vanguard/injector/techniques/zero_width.py" = ["RUF001"]
+"tests/*" = ["RUF001"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

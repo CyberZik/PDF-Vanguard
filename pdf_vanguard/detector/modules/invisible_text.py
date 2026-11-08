@@ -5,8 +5,8 @@ from typing import List
 
 import pdfplumber
 
-from pdf_vanguard.core.models import Finding
 from pdf_vanguard.core.constants import MICRO_FONT_THRESHOLD, WHITE_COLOR_THRESHOLD
+from pdf_vanguard.core.models import Finding
 from pdf_vanguard.detector.modules.base import BaseDetector
 
 logger = logging.getLogger(__name__)

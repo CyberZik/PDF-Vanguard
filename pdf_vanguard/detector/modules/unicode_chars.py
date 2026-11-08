@@ -5,9 +5,10 @@ from typing import Dict, List
 
 from pypdf import PdfReader
 
-from pdf_vanguard.core.models import Finding
 from pdf_vanguard.core.constants import INVISIBLE_CHARS, TAG_RANGE
+from pdf_vanguard.core.models import Finding
 from pdf_vanguard.detector.modules.base import BaseDetector
+from pdf_vanguard.detector.zwc_decoder import decode_zwc
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +56,18 @@ class UnicodeDetector(BaseDetector):
                         evidence=detail,
                         location=f"Page {page_num}",
                     ))
+
+                    # Attempt to decode zero-width steganography payload
+                    decoded = decode_zwc(text)
+                    if decoded:
+                        snippet = decoded if len(decoded) <= 160 else decoded[:157] + "..."
+                        findings.append(Finding(
+                            technique="Decoded Zero-Width Payload",
+                            severity="CRITICAL",
+                            description=f"Decoded hidden zero-width payload on page {page_num}",
+                            evidence=f"Hidden text: {snippet}",
+                            location=f"Page {page_num}",
+                        ))
 
         except Exception as e:
             logger.warning("Unicode detection error: %s", e)
