@@ -5,11 +5,12 @@ import logging
 import pikepdf
 
 from pdf_vanguard.core.models import InjectionResult
-from pdf_vanguard.injector.techniques.base import BaseTechnique
 from pdf_vanguard.injector.pdf_utils import (
+    ZWC_CODE_MAP,
     append_content_stream_raw,
-    ensure_font_resource,
+    ensure_zwc_font_resource,
 )
+from pdf_vanguard.injector.techniques.base import BaseTechnique
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,8 @@ class ZeroWidthTechnique(BaseTechnique):
       - U+200D (Zero-Width Joiner) = bit 1
       - U+200C (Zero-Width Non-Joiner) = character separator
 
-    Injected as a UTF-16BE hex string into the first page.
+    Drawn on the first page with a font whose ToUnicode CMap maps the
+    byte codes back to the real code points, so text extractors recover them.
     """
 
     name = "Zero-Width Char Encoding"
@@ -31,39 +33,35 @@ class ZeroWidthTechnique(BaseTechnique):
 
     def inject(self, pdf: pikepdf.Pdf, payload: str) -> InjectionResult:
         try:
-            zwsp = "\u200B"
-            zwj = "\u200D"
-            zwnj = "\u200C"
+            encoded = encode_zwc(payload)
 
-            # Binary-encode each character of the payload
-            encoded = ""
-            for ch in payload:
-                bits = format(ord(ch), '08b')
-                encoded += "".join(zwsp if b == '0' else zwj for b in bits)
-                encoded += zwnj
+            # Each zero-width char is drawn as a single-byte code; the font's
+            # ToUnicode CMap maps it back to the real code point on extraction.
+            raw = bytes(ZWC_CODE_MAP[ch] for ch in encoded)
 
-            # Encode as UTF-16BE hex string for PDF
-            utf16_bytes = encoded.encode("utf-16-be")
-            hex_str = "FEFF" + utf16_bytes.hex().upper()
-
-            # Inject as hex string in content stream (first page only)
-            for page in pdf.pages:
-                injection = (
-                    "\nq "
-                    "BT "
-                    "/F1 1 Tf "
-                    "0 0 Td "
-                    f"<{hex_str}> Tj "
-                    "ET "
-                    "Q\n"
-                )
-                append_content_stream_raw(pdf, page, injection.encode("ascii"))
-                ensure_font_resource(page)
-                break  # Only first page
+            page = pdf.pages[0]  # First page only
+            font = ensure_zwc_font_resource(pdf, page)
+            injection = (
+                b"\nq BT " + font.encode("ascii") + b" 1 Tf 0 0 Td <"
+                + raw.hex().upper().encode("ascii") + b"> Tj ET Q\n"
+            )
+            append_content_stream_raw(pdf, page, injection)
 
             return self._ok(
-                f"Zero-width character encoding ({len(encoded)} invisible chars, UTF-16BE hex)"
+                f"Zero-width character encoding ({len(encoded)} invisible chars, ToUnicode-mapped)"
             )
         except Exception as e:
             logger.error("Zero-width char injection failed: %s", e)
             return self._fail(str(e))
+
+
+def encode_zwc(payload: str) -> str:
+    """Binary-encode the UTF-8 bytes of ``payload`` as zero-width characters.
+
+    U+200B = bit 0, U+200D = bit 1, U+200C terminates each byte.
+    """
+    out = []
+    for byte in payload.encode("utf-8"):
+        out.append("".join("\u200B" if b == "0" else "\u200D" for b in format(byte, "08b")))
+        out.append("\u200C")
+    return "".join(out)

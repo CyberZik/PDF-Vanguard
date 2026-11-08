@@ -6,7 +6,7 @@ import os
 import sys
 
 from pdf_vanguard.detector.engine import scan_pdf
-from pdf_vanguard.detector.reporter import print_report, print_summary_table, export_json
+from pdf_vanguard.detector.reporter import export_json, print_report, print_summary_table
 
 
 def main():
@@ -47,7 +47,7 @@ Examples:
             ])
         else:
             print(f"\n[!] No files specified and '{sample_dir}/' not found.")
-            print(f"    Usage: pdf-scan <file1.pdf> [file2.pdf ...]")
+            print("    Usage: pdf-scan <file1.pdf> [file2.pdf ...]")
             sys.exit(1)
 
     if not targets:

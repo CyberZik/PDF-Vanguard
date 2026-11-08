@@ -4,8 +4,8 @@ import logging
 import re
 from typing import List
 
-from pdf_vanguard.core.models import Finding
 from pdf_vanguard.core.constants import INJECTION_PATTERNS
+from pdf_vanguard.core.models import Finding
 from pdf_vanguard.detector.modules.base import BaseDetector
 
 logger = logging.getLogger(__name__)

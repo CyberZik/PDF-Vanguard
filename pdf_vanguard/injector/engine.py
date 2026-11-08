@@ -6,9 +6,9 @@ from typing import List, Optional
 
 import pikepdf
 
-from pdf_vanguard.core.models import InjectionSummary
 from pdf_vanguard.core.constants import DEFAULT_PAYLOAD
-from pdf_vanguard.injector.techniques import TECHNIQUE_REGISTRY, ALL_TECHNIQUE_FLAGS
+from pdf_vanguard.core.models import InjectionSummary
+from pdf_vanguard.injector.techniques import ALL_TECHNIQUE_FLAGS, TECHNIQUE_REGISTRY
 
 logger = logging.getLogger(__name__)
 

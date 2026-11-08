@@ -4,9 +4,9 @@ import argparse
 import logging
 import sys
 
-from pdf_vanguard.injector.engine import inject_pdf
-from pdf_vanguard.injector.techniques import TECHNIQUE_REGISTRY, ALL_TECHNIQUE_FLAGS
 from pdf_vanguard.core.constants import DEFAULT_PAYLOAD
+from pdf_vanguard.injector.engine import inject_pdf
+from pdf_vanguard.injector.techniques import ALL_TECHNIQUE_FLAGS, TECHNIQUE_REGISTRY
 
 
 def main():
@@ -67,7 +67,7 @@ Techniques:
 
     # Print header
     print(f"\n{'=' * 65}")
-    print(f"  PDF-Vanguard Injector (Red Team)")
+    print("  PDF-Vanguard Injector (Red Team)")
     print(f"{'=' * 65}")
     print(f"  Input:      {args.input}")
     print(f"  Output:     {args.output or '(auto)'}")
@@ -91,12 +91,12 @@ Techniques:
 
     # Print summary
     print(f"\n{'-' * 65}")
-    print(f"  INJECTION SUMMARY")
+    print("  INJECTION SUMMARY")
     print(f"{'-' * 65}")
     print(f"  Pages:         {summary.original_pages}")
     print(f"  Original size: {summary.original_size:,} bytes")
     print(f"  Output size:   {summary.output_size:,} bytes (+{summary.output_size - summary.original_size:,})")
-    print(f"  Techniques applied:")
+    print("  Techniques applied:")
     for r in summary.results:
         icon = "+" if r.status == "OK" else "x"
         print(f"    {icon} [{r.technique_flag:7s}] {r.technique_name}")

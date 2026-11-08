@@ -2,3 +2,5 @@
 
 from pdf_vanguard.detector.engine import scan_pdf
 from pdf_vanguard.detector.modules import DETECTOR_REGISTRY
+
+__all__ = ["scan_pdf", "DETECTOR_REGISTRY"]

@@ -4,7 +4,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-3776AB.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code Style: Clean](https://img.shields.io/badge/code%20style-modular-brightgreen.svg)](https://github.com/diffe/PDF-Vanguard)
+[![Code Style: Clean](https://img.shields.io/badge/code%20style-modular-brightgreen.svg)](https://github.com/CyberZik/PDF-Vanguard)
 
 ---
 
@@ -69,7 +69,7 @@ PDF-Vanguard is built from the ground up with a **clean, modular, plugin-based a
 Clone the repository and install it in editable mode:
 
 ```bash
-git clone https://github.com/<your-username>/PDF-Vanguard.git
+git clone https://github.com/CyberZik/PDF-Vanguard.git
 cd PDF-Vanguard
 pip install -e .
 ```

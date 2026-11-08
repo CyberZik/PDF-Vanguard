@@ -61,7 +61,7 @@ def print_report(report: ScanReport) -> None:
 def print_summary_table(reports: List[ScanReport]) -> None:
     """Print a summary table of multiple scan results."""
     print(f"\n{'=' * 70}")
-    print(f"  SUMMARY")
+    print("  SUMMARY")
     print(f"{'=' * 70}")
     print(f"  {'File':<42s} {'Findings':>8s}  {'Score':>5s}  {'Risk':>10s}")
     print(f"  {'-' * 42} {'-' * 8}  {'-' * 5}  {'-' * 10}")

@@ -30,10 +30,34 @@ class ScanReport:
         self.findings.append(finding)
 
     def calculate_risk(self) -> None:
-        """Calculate risk score from findings. Capped at 100."""
+        """Calculate risk score from findings. Capped at 100.
+
+        Findings are scored by *distinct technique* so that the same injection
+        echoed across several metadata streams (or repeated pattern hits) does
+        not saturate the score. The highest severity seen for a technique
+        counts in full; each additional distinct technique of that severity
+        adds a diminishing contribution.
+        """
         from pdf_vanguard.core.constants import SEVERITY_SCORES
-        total = sum(SEVERITY_SCORES.get(f.severity, 0) for f in self.findings)
-        self.risk_score = min(total, 100)
+
+        # Highest severity observed per distinct technique.
+        severity_rank = {"CRITICAL": 5, "HIGH": 4, "MEDIUM": 3, "LOW": 2, "INFO": 1}
+        best_by_technique = {}
+        for f in self.findings:
+            rank = severity_rank.get(f.severity, 0)
+            if rank > severity_rank.get(best_by_technique.get(f.technique), -1):
+                best_by_technique[f.technique] = f.severity
+
+        # Full weight for the first technique at a given severity, then decay.
+        total = 0.0
+        seen_at_severity = {}
+        for severity in sorted(best_by_technique.values(),
+                               key=lambda s: -severity_rank.get(s, 0)):
+            n = seen_at_severity.get(severity, 0)
+            total += SEVERITY_SCORES.get(severity, 0) * (0.5 ** n)
+            seen_at_severity[severity] = n + 1
+
+        self.risk_score = min(int(round(total)), 100)
         if self.risk_score >= 60:
             self.risk_level = "CRITICAL"
         elif self.risk_score >= 40:

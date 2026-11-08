@@ -5,12 +5,12 @@ import logging
 import pikepdf
 
 from pdf_vanguard.core.models import InjectionResult
-from pdf_vanguard.injector.techniques.base import BaseTechnique
 from pdf_vanguard.injector.pdf_utils import (
-    escape_pdf_string,
     append_content_stream,
     ensure_font_resource,
+    escape_pdf_string,
 )
+from pdf_vanguard.injector.techniques.base import BaseTechnique
 
 logger = logging.getLogger(__name__)
 
